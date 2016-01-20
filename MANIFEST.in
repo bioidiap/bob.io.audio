@@ -1,0 +1,5 @@
+include LICENSE README.rst bootstrap-buildout.py buildout.cfg requirements.txt version.txt
+recursive-include doc conf.py *.rst
+recursive-include bob *.cpp *.h
+recursive-include bob/io/video/data *.*
+recursive-include bob/io/video/fonts *.txt *.ttf
