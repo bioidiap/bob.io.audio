@@ -21,7 +21,7 @@
 PyDoc_STRVAR(s_audiowriter_str, BOB_EXT_MODULE_PREFIX "." AUDIOWRITER_NAME);
 
 PyDoc_STRVAR(s_audiowriter_doc,
-"writer(filename, [rate=8000., [encoding='UNSIGNED', [bits_per_sample=16]]]) -> new writer\n\
+"writer(filename, [rate=8000., [encoding='UNKNOWN', [bits_per_sample=16]]]) -> new writer\n\
 \n\
 Use this object to write samples to audio files.\n\
 \n\
@@ -93,7 +93,7 @@ static int PyBobIoAudioWriter_Init(PyBobIoAudioWriterObject* self,
 
   auto filename_ = make_safe(filename);
 
-  std::string encoding_str = encoding?encoding:"UNSIGNED";
+  std::string encoding_str = encoding?encoding:"UNKNOWN";
   sox_encoding_t sox_encoding = bob::io::audio::string2encoding(encoding_str.c_str());
 
 #if PY_VERSION_HEX >= 0x03000000
@@ -311,7 +311,7 @@ static PyObject* PyBobIoAudioWriter_Append(PyBobIoAudioWriterObject* self, PyObj
     return 0;
   }
 
-  if (sample->type_num != NPY_FLOAT32) {
+  if (sample->type_num != NPY_FLOAT64) {
     PyErr_Format(PyExc_TypeError, "input array should have dtype `float64', but you passed an array with dtype == `%s'", PyBlitzArray_TypenumAsString(sample->type_num));
     return 0;
   }
