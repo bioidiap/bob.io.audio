@@ -22,7 +22,7 @@ void bob::io::audio::Reader::open(const char* filename) {
   m_filename = filename;
 
   if (!boost::filesystem::exists(filename)) {
-    boost::format m("file '%s' is not readable");
+    boost::format m("file `%s' does not exist or cannot be read");
     m % filename;
     throw std::runtime_error(m.str());
   }
@@ -33,7 +33,7 @@ void bob::io::audio::Reader::open(const char* filename) {
   sox_format_t* f = sox_open_read(filename, 0, 0, 0);
 
   if (!f) {
-    boost::format m("file '%s' is not readable by SoX");
+    boost::format m("file `%s' is not readable by SoX (internal call to `sox_open_read()' failed)");
     m % filename;
     throw std::runtime_error(m.str());
   }
@@ -94,7 +94,9 @@ size_t bob::io::audio::Reader::load(bob::io::base::array::interface& b) const {
   auto nsamp = this->numberOfSamples()
   for (int i=0; i<nsamp; ++i) {
     sox_read(m_file.get(), m_buffer.get(), nchan);
-    for (int j=0; j<nchan; ++j) dst(j,i) = m_buffer[j] / bob::io::audio::SOX_CONVERSION_COEF;
+    for (int j=0; j<nchan; ++j) {
+      dst(j,i) = m_buffer[j] / bob::io::audio::SOX_CONVERSION_COEF;
+    }
   }
 
   this->reset();

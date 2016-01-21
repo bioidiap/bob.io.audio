@@ -14,6 +14,10 @@
 #include <bob.core/api.h>
 #include <bob.io.base/api.h>
 
+#include <map>
+#include "file.h"
+#include "cpp/writer.h"
+
 static PyMethodDef module_methods[] = {
   {0}  /* Sentinel */
 };
@@ -31,7 +35,16 @@ static PyModuleDef module_definition = {
 };
 #endif
 
+extern PyTypeObject PyBobIoAudioReader_Type;
+extern PyTypeObject PyBobIoAudioWriter_Type;
+
 static PyObject* create_module (void) {
+
+  PyBobIoAudioReader_Type.tp_new = PyType_GenericNew;
+  if (PyType_Ready(&PyBobIoAudioReader_Type) < 0) return 0;
+
+  PyBobIoAudioWriter_Type.tp_new = PyType_GenericNew;
+  if (PyType_Ready(&PyBobIoAudioWriter_Type) < 0) return 0;
 
 # if PY_VERSION_HEX >= 0x03000000
   PyObject* m = PyModule_Create(&module_definition);
@@ -43,62 +56,25 @@ static PyObject* create_module (void) {
 # endif
   if (!m) return 0;
 
+  /* register the types to python */
+  Py_INCREF(&PyBobIoAudioReader_Type);
+  if (PyModule_AddObject(m, "reader", (PyObject *)&PyBobIoAudioReader_Type) < 0) return 0;
+
+  Py_INCREF(&PyBobIoAudioWriter_Type);
+  if (PyModule_AddObject(m, "writer", (PyObject *)&PyBobIoAudioWriter_Type) < 0) return 0;
+
   /* imports dependencies */
   if (import_bob_blitz() < 0) return 0;
   if (import_bob_core_logging() < 0) return 0;
   if (import_bob_io_base() < 0) return 0;
 
-  /* activates image plugins */
-  if (!PyBobIoCodec_Register(".tif", "TIFF, compresssed (libtiff)",
-        &make_tiff_file)) {
-    PyErr_Print();
-  }
-
-  if (!PyBobIoCodec_Register(".tiff", "TIFF, compresssed (libtiff)",
-        &make_tiff_file)) {
-    PyErr_Print();
-  }
-
-  if (BITS_IN_JSAMPLE == 8) {
-    if (!PyBobIoCodec_Register(".jpg", "JPEG, compresssed (libjpeg)",
-          &make_jpeg_file)) {
+  /* activates audio plugins */
+  for (auto k=bob::io::audio::SUPPORTED_FORMATS.begin();
+      k!=bob::io::audio::SUPPORTED_FORMATS.end(); ++k) {
+    if (!PyBobIoCodec_Register(k->first.c_str(), k->second.c_str(), &make_file)) {
       PyErr_Print();
+      //do not return 0, or we may crash badly
     }
-    if (!PyBobIoCodec_Register(".jpeg", "JPEG, compresssed (libjpeg)",
-          &make_jpeg_file)) {
-      PyErr_Print();
-    }
-  }
-  else {
-    PyErr_Format(PyExc_RuntimeError, "libjpeg compiled with `%d' bits depth (instead of 8). JPEG images are hence not supported.", BITS_IN_JSAMPLE);
-    PyErr_Print();
-  }
-
-  if (!PyBobIoCodec_Register(".gif", "GIF (giflib)", &make_gif_file)) {
-    PyErr_Print();
-  }
-
-  if (!PyBobIoCodec_Register(".pbm", "PBM, indexed (libnetpbm)",
-        &make_netpbm_file)) {
-    PyErr_Print();
-  }
-
-  if (!PyBobIoCodec_Register(".pgm", "PGM, indexed (libnetpbm)",
-        &make_netpbm_file)) {
-    PyErr_Print();
-  }
-
-  if (!PyBobIoCodec_Register(".ppm", "PPM, indexed (libnetpbm)",
-        &make_netpbm_file)) {
-    PyErr_Print();
-  }
-
-  if (!PyBobIoCodec_Register(".png", "PNG, compressed (libpng)", &make_png_file)) {
-    PyErr_Print();
-  }
-
-  if (!PyBobIoCodec_Register(".bmp", "BMP, (built-in codec)", &make_bmp_file)) {
-    PyErr_Print();
   }
 
   return Py_BuildValue(ret, m);

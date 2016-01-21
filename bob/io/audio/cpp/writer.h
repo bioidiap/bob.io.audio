@@ -24,6 +24,9 @@ extern "C" {
 
 namespace bob { namespace io { namespace video {
 
+  /* Until we can get a better handle (requires C++-11 initializers) */
+  const std::map<std::string, std::string> SUPPORTED_FORMATS;
+
   /**
    * Use objects of this class to create and write audio files.
    */
