@@ -68,23 +68,8 @@ bob::io::audio::Writer::Writer(const char* filename, double rate,
   sox_signalinfo_t siginfo;
   siginfo.rate = rate;
   siginfo.precision = bits_per_sample;
-  siginfo.channels = 0;
-  siginfo.length = 0;
-
-  sox_encodinginfo_t encoding_info;
-  encoding_info.encoding = encoding;
-  encoding_info.bits_per_sample = bits_per_sample;
-  encoding_info.compression = HUGE_VAL;
-
-#if SOX_LIB_VERSION_CODE >= SOX_LIB_VERSION(14,4,0)
-  encoding_info.reverse_bytes = sox_option_default;
-  encoding_info.reverse_nibbles = sox_option_default;
-  encoding_info.reverse_bits = sox_option_default;
-#else
-  encoding_info.reverse_bytes = SOX_OPTION_DEFAULT;
-  encoding_info.reverse_nibbles = SOX_OPTION_DEFAULT;
-  encoding_info.reverse_bits = SOX_OPTION_DEFAULT;
-#endif
+  siginfo.channels = SOX_UNSPEC;
+  siginfo.length = SOX_UNKNOWN_LEN;
 
   const char* extension = lsx_find_file_extension(filename);
 
@@ -96,8 +81,16 @@ bob::io::audio::Writer::Writer(const char* filename, double rate,
   }
 
   sox_format_t* f = 0;
-  if (encoding == SOX_ENCODING_UNKNOWN) f = sox_open_write(filename, &siginfo, 0, extension, 0, 0);
-  else f = sox_open_write(filename, &siginfo, &encoding_info, 0, 0, 0);
+  if (encoding == SOX_ENCODING_UNKNOWN) {
+    f = sox_open_write(filename, &siginfo, 0, extension, 0, 0);
+  }
+  else {
+    sox_encodinginfo_t encoding_info;
+    encoding_info.encoding = encoding;
+    encoding_info.bits_per_sample = bits_per_sample;
+    encoding_info.compression = HUGE_VAL;
+    f = sox_open_write(filename, &siginfo, &encoding_info, 0, 0, 0);
+  }
 
   if (!f) {
     boost::format m("file `%s' is not writeable by SoX (internal call to `sox_open_write()' failed) -- we suggest you check writing permissions and existence of leading paths");
@@ -142,12 +135,18 @@ void bob::io::audio::Writer::append(const blitz::Array<double,1>& data) {
 
   for (int j=0; j<data.extent(0); ++j)
     m_buffer[j] = (sox_sample_t)(data(j) * bob::io::audio::SOX_CONVERSION_COEF);
-  sox_write(m_file.get(), m_buffer.get(), m_typeinfo.shape[0]);
+  size_t written = sox_write(m_file.get(), m_buffer.get(), m_typeinfo.shape[0]);
 
   // updates internal counters
   m_file->signal.length += m_file->signal.channels;
   m_typeinfo.shape[1] += 1;
   m_typeinfo.update_strides();
+
+  if (written != 1) {
+    boost::format m("I was asked to append 1 sample to file `%s', but `sox_write()' failed miserably - this is not a definitive error, the stream is still sane");
+    m % m_filename;
+    throw std::runtime_error(m.str());
+  }
 }
 
 
@@ -172,16 +171,24 @@ void bob::io::audio::Writer::append(const blitz::Array<double,2>& data) {
     throw std::runtime_error(m.str());
   }
 
+  size_t written = 0;
   for (int i=0; i<data.extent(1); i++) {
-    for (int j=0; j<data.extent(0); ++j)
+    for (int j=0; j<data.extent(0); ++j) {
       m_buffer[j] = (sox_sample_t)(data(j, i) * bob::io::audio::SOX_CONVERSION_COEF);
-    sox_write(m_file.get(), m_buffer.get(), m_typeinfo.shape[0]);
+    }
+    written += sox_write(m_file.get(), m_buffer.get(), m_typeinfo.shape[0]);
   }
 
   // updates internal counters
-  m_file->signal.length += data.extent(1) * m_file->signal.channels;
-  m_typeinfo.shape[1] += data.extent(1);
+  m_file->signal.length += written * m_file->signal.channels;
+  m_typeinfo.shape[1] += written;
   m_typeinfo.update_strides();
+
+  if (written != (size_t)data.extent(1)) {
+    boost::format m("I was asked to append %d samples to file `%s', but `sox_write()' managed to append %d samples only - this is not a definitive error, the stream is still sane");
+    m % data.extent(1) % m_filename % written;
+    throw std::runtime_error(m.str());
+  }
 }
 
 void bob::io::audio::Writer::append(const bob::io::base::array::interface& data) {

@@ -105,13 +105,14 @@ def test_sph_timit_2():
   run_check('timit-sa2', '.wav', '.sph')
 
 
-def read_write(stem, fmt1, fmt2):
+def read_write(stem, fmt1, fmt2, encoding='UNKNOWN', bits_per_sample=16):
 
   f1 = reader(F(stem + fmt1))
   data = f1.load()
 
   f2_filename = temporary_filename(suffix=fmt2)
-  f2 = writer(f2_filename, rate=f1.rate)
+  f2 = writer(f2_filename, rate=f1.rate, encoding=encoding,
+      bits_per_sample=bits_per_sample)
   f2.append(data)
   f2.close() #forces file closing
 
@@ -137,3 +138,9 @@ def test_wav_writing_timit_1():
 
 def test_wav_writing_timit_2():
   read_write('timit-sa2', '.sph', '.wav')
+
+def test_au_writing_timit_1():
+  read_write('timit-sa1', '.sph', '.au')
+
+def test_au_writing_timit_2():
+  read_write('timit-sa2', '.sph', '.au')
