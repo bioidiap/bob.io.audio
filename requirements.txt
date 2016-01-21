@@ -1,5 +1,7 @@
 setuptools
+scipy
 bob.extension>2.0.4
 bob.blitz
 bob.core
 bob.io.base
+bob.io.matlab

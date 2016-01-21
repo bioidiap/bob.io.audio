@@ -107,7 +107,7 @@ bob::io::audio::Writer::Writer(const char* filename, double rate,
 
   m_file = boost::shared_ptr<sox_format_t>(f, std::ptr_fun(bob::io::audio::close_sox_file));
 
-  m_typeinfo.dtype = bob::core::array::t_float64;
+  m_typeinfo.dtype = bob::io::base::array::t_float64;
   m_typeinfo.nd = 2;
   m_typeinfo.shape[0] = 0;
   m_typeinfo.shape[1] = 0;
@@ -134,7 +134,7 @@ void bob::io::audio::Writer::append(const blitz::Array<double,1>& data) {
   }
 
   //checks data specifications
-  if (m_typeinfo.shape[0] != data.extent(0)) {
+  if (m_typeinfo.shape[0] != (size_t)data.extent(0)) {
     boost::format m("input sample size for file `%s' should be (%d,)");
     m % m_filename % m_typeinfo.shape[0];
     throw std::runtime_error(m.str());
@@ -145,7 +145,7 @@ void bob::io::audio::Writer::append(const blitz::Array<double,1>& data) {
   sox_write(m_file.get(), m_buffer.get(), m_typeinfo.shape[0]);
 
   // updates internal counters
-  m_signal_cache.length += m_file->signal.channels;
+  m_file->signal.length += m_file->signal.channels;
   m_typeinfo.shape[1] += 1;
   m_typeinfo.update_strides();
 }
@@ -166,7 +166,7 @@ void bob::io::audio::Writer::append(const blitz::Array<double,2>& data) {
   }
 
   //checks data specifications
-  if (m_typeinfo.shape[0] != data.extent(0)) {
+  if (m_typeinfo.shape[0] != (size_t)data.extent(0)) {
     boost::format m("input sample size for file `%s' should have %d rows");
     m % m_filename % m_typeinfo.shape[0];
     throw std::runtime_error(m.str());
@@ -179,7 +179,7 @@ void bob::io::audio::Writer::append(const blitz::Array<double,2>& data) {
   }
 
   // updates internal counters
-  m_signal_cache.length += data.extent(1) * m_file->signal.channels;
+  m_file->signal.length += data.extent(1) * m_file->signal.channels;
   m_typeinfo.shape[1] += data.extent(1);
   m_typeinfo.update_strides();
 }

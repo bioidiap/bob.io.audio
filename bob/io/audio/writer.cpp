@@ -94,7 +94,7 @@ static int PyBobIoAudioWriter_Init(PyBobIoAudioWriterObject* self,
   auto filename_ = make_safe(filename);
 
   std::string encoding_str = encoding?encoding:"UNSIGNED";
-  sox_encoding_t sox_encoding = bob::io::audio::string2encoding(encoding_str);
+  sox_encoding_t sox_encoding = bob::io::audio::string2encoding(encoding_str.c_str());
 
 #if PY_VERSION_HEX >= 0x03000000
   const char* c_filename = PyBytes_AS_STRING(filename);
@@ -174,15 +174,15 @@ PyDoc_STRVAR(s_compression_factor_str, "compressionfactor");
 PyDoc_STRVAR(s_compression_factor_doc,
 "[float] Compression factor on the audio stream");
 
-PyObject* PyBobIoAudioWriter_Encoding(PyBobIoAudioWriterObject* self) {
-  return Py_BuildValue("s", bob::io::audio::encoding2string(self->v->encoding()).c_str());
+PyObject* PyBobIoAudioWriter_EncodingName(PyBobIoAudioWriterObject* self) {
+  return Py_BuildValue("s", bob::io::audio::encoding2string(self->v->encoding()));
 }
 
 PyDoc_STRVAR(s_encoding_name_str, "encoding");
 PyDoc_STRVAR(s_encoding_name_doc,
 "[str] Name of the encoding in which this audio file was recorded in");
 
-PyObject* PyBobIoAudioWriter_Type(PyBobIoAudioWriterObject* self) {
+PyObject* PyBobIoAudioWriter_TypeInfo(PyBobIoAudioWriterObject* self) {
   return PyBobIo_TypeInfoAsTuple(self->v->type());
 }
 
@@ -244,10 +244,10 @@ static PyGetSetDef PyBobIoAudioWriter_getseters[] = {
       0,
     },
     {
-      s_encoding_str,
-      (getter)PyBobIoAudioWriter_Encoding,
+      s_encoding_name_str,
+      (getter)PyBobIoAudioWriter_EncodingName,
       0,
-      s_encoding_doc,
+      s_encoding_name_doc,
       0,
     },
     {
@@ -259,7 +259,7 @@ static PyGetSetDef PyBobIoAudioWriter_getseters[] = {
     },
     {
       s_type_str,
-      (getter)PyBobIoAudioWriter_Type,
+      (getter)PyBobIoAudioWriter_TypeInfo,
       0,
       s_type_doc,
       0,
@@ -277,7 +277,7 @@ static PyGetSetDef PyBobIoAudioWriter_getseters[] = {
 static PyObject* PyBobIoAudioWriter_Repr(PyBobIoAudioWriterObject* self) {
   if (!self->v->is_opened()) {
     PyErr_Format(PyExc_RuntimeError, "`%s' for `%s' is closed",
-        Py_TYPE(self)->tp_name, self->v->filename().c_str());
+        Py_TYPE(self)->tp_name, self->v->filename());
     return 0;
   }
 
@@ -287,14 +287,14 @@ static PyObject* PyBobIoAudioWriter_Repr(PyBobIoAudioWriterObject* self) {
 # else
   PyString_FromFormat
 # endif
-  ("%s(filename='%s', rate=%g, encoding=%s, bits_per_sample=%" PY_FORMAT_SIZE_T "d)", Py_TYPE(self)->tp_name, self->v->filename().c_str(), self->v->rate(), bob::io::audio::encoding2string(self->v->encoding()).c_str(), self->v->bitsPerSample());
+  ("%s(filename='%s', rate=%g, encoding=%s, bits_per_sample=%" PY_FORMAT_SIZE_T "d)", Py_TYPE(self)->tp_name, self->v->filename(), self->v->rate(), bob::io::audio::encoding2string(self->v->encoding()), self->v->bitsPerSample());
 }
 
 static PyObject* PyBobIoAudioWriter_Append(PyBobIoAudioWriterObject* self, PyObject *args, PyObject* kwds) {
 
   if (!self->v->is_opened()) {
     PyErr_Format(PyExc_RuntimeError, "`%s' for `%s' is closed",
-        Py_TYPE(self)->tp_name, self->v->filename().c_str());
+        Py_TYPE(self)->tp_name, self->v->filename());
     return 0;
   }
 
@@ -329,7 +329,7 @@ static PyObject* PyBobIoAudioWriter_Append(PyBobIoAudioWriterObject* self, PyObj
     return 0;
   }
   catch (...) {
-    if (!PyErr_Occurred()) PyErr_Format(PyExc_RuntimeError, "caught unknown exception while writing sample #%" PY_FORMAT_SIZE_T "d to file `%s'", self->v->numberOfSamples(), self->v->filename().c_str());
+    if (!PyErr_Occurred()) PyErr_Format(PyExc_RuntimeError, "caught unknown exception while writing sample #%" PY_FORMAT_SIZE_T "d to file `%s'", self->v->numberOfSamples(), self->v->filename());
     return 0;
   }
 
@@ -390,7 +390,7 @@ Py_ssize_t PyBobIoAudioWriter_Len(PyBobIoAudioWriterObject* self) {
 }
 
 static PyMappingMethods PyBobIoAudioWriter_Mapping = {
-    (lenfunc)PyBobIoAudioWriter_Len, //mp_lenght
+    (lenfunc)PyBobIoAudioWriter_Len, //mp_length
     0, /* (binaryfunc)PyBobIoAudioWriter_GetItem, //mp_subscript */
     0  /* (objobjargproc)PyBobIoAudioWriter_SetItem //mp_ass_subscript */
 };
@@ -411,7 +411,7 @@ PyTypeObject PyBobIoAudioWriter_Type = {
     &PyBobIoAudioWriter_Mapping,                /*tp_as_mapping*/
     0,                                          /*tp_hash */
     0,                                          /*tp_call*/
-    (reprfunc)PyBobIoAudioWriter_Print,         /*tp_str*/
+    (reprfunc)PyBobIoAudioWriter_Repr,          /*tp_str*/
     0,                                          /*tp_getattro*/
     0,                                          /*tp_setattro*/
     0,                                          /*tp_as_buffer*/

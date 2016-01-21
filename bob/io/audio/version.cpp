@@ -6,6 +6,7 @@
  */
 
 #define BOB_IMPORT_VERSION
+#include <cstring>
 #include <bob.blitz/config.h>
 #include <bob.blitz/cleanup.h>
 #include <bob.core/config.h>
@@ -23,7 +24,7 @@ static int dict_set(PyObject* d, const char* key, const char* value) {
 /**
  * SoX version
  */
-static PyObject* sox_version() {
+static PyObject* py_sox_version() {
   PyObject* retval = PyDict_New();
   if (!retval) return 0;
   auto retval_ = make_safe(retval);
@@ -41,7 +42,7 @@ static PyObject* build_version_dictionary() {
   if (!retval) return 0;
   auto retval_ = make_safe(retval);
 
-  if (!dict_steal(retval, "SoX", sox_version())) return 0;
+  if (!dict_steal(retval, "SoX", py_sox_version())) return 0;
   if (!dict_steal(retval, "Boost", boost_version())) return 0;
   if (!dict_steal(retval, "Compiler", compiler_version())) return 0;
   if (!dict_steal(retval, "Python", python_version())) return 0;

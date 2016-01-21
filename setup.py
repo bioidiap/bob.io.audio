@@ -59,6 +59,7 @@ setup(
           "bob/io/audio/cpp/utils.cpp",
           "bob/io/audio/cpp/reader.cpp",
           "bob/io/audio/cpp/writer.cpp",
+          "bob/io/audio/bobskin.cpp",
           "bob/io/audio/reader.cpp",
           "bob/io/audio/writer.cpp",
           "bob/io/audio/file.cpp",

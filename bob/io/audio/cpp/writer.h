@@ -9,6 +9,7 @@
 #ifndef BOB_IO_AUDIO_WRITER_H
 #define BOB_IO_AUDIO_WRITER_H
 
+#include <map>
 #include <string>
 #include <blitz/array.h>
 
@@ -22,10 +23,10 @@ extern "C" {
 }
 
 
-namespace bob { namespace io { namespace video {
+namespace bob { namespace io { namespace audio {
 
   /* Until we can get a better handle (requires C++-11 initializers) */
-  const std::map<std::string, std::string> SUPPORTED_FORMATS;
+  extern const std::map<std::string, std::string> SUPPORTED_FORMATS;
 
   /**
    * Use objects of this class to create and write audio files.
@@ -45,7 +46,8 @@ namespace bob { namespace io { namespace video {
        * @param bits_per_sample What-it-says...
        */
       Writer(const char* filename, double rate=8000,
-          sox_encoding_t encoding=UNSIGNED, size_t bits_per_sample=16);
+          sox_encoding_t encoding=SOX_ENCODING_UNKNOWN,
+          size_t bits_per_sample=16);
 
       /**
        * Destructor virtualization
@@ -113,7 +115,7 @@ namespace bob { namespace io { namespace video {
       /**
        * Returns the typing information for the audio file
        */
-      inline const bob::core::array::typeinfo& type() const
+      inline const bob::io::base::array::typeinfo& type() const
       { return m_typeinfo; }
 
       /**

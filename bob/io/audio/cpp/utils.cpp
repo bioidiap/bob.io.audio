@@ -8,7 +8,7 @@
 #include "utils.h"
 #include <map>
 
-const double bob::io::audio::SOX_CONVERSION_COEF=2147483648.;
+const double bob::io::audio::SOX_CONVERSION_COEF=2147483648.; /* 2^31 */
 
 void bob::io::audio::close_sox_file(sox_format_t* f) {
   sox_close(f);
@@ -48,12 +48,12 @@ static const std::map<sox_encoding_t, std::string> ENC2STR = {
 
 const char* bob::io::audio::encoding2string(sox_encoding_t e) {
   auto it = ENC2STR.find(e);
-  if (e != ENC2STR.end()) return it->second;
-  return ENC2STR.rbegin()->second; //last entry: UNKNOWN
+  if (it != ENC2STR.end()) return it->second.c_str();
+  return ENC2STR.rbegin()->second.c_str(); //last entry: UNKNOWN
 }
 
 //requires c++11 for compiling
-static const std::map<sox_encoding_t, std::string> STR2ENC = {
+static const std::map<std::string, sox_encoding_t> STR2ENC = {
   {"SIGN2", SOX_ENCODING_SIGN2},
   {"UNSIGNED", SOX_ENCODING_UNSIGNED},
   {"FLOAT", SOX_ENCODING_FLOAT},
@@ -85,7 +85,7 @@ static const std::map<sox_encoding_t, std::string> STR2ENC = {
 };
 
 sox_encoding_t bob::io::audio::string2encoding(const char* s) {
-  auto it = STR2ENC.find(e);
-  if (e != STR2ENC.end()) return it->second;
+  auto it = STR2ENC.find(s);
+  if (it != STR2ENC.end()) return it->second;
   return STR2ENC.rbegin()->second; //last entry: UNKNOWN
 }

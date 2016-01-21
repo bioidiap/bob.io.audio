@@ -10,10 +10,10 @@
 #define BOB_IO_AUDIO_READER_H
 
 #include <string>
-#include <blitz/array.h>
 
 #include <boost/shared_ptr.hpp>
 #include <boost/shared_array.hpp>
+#include <blitz/array.h>
 
 #include <bob.io.base/array.h>
 
@@ -22,7 +22,7 @@ extern "C" {
 }
 
 
-namespace bob { namespace io { namespace video {
+namespace bob { namespace io { namespace audio {
 
   /**
    * Reader objects can read data from audio files. The current implementation
@@ -109,14 +109,17 @@ namespace bob { namespace io { namespace video {
        * Loads all of the audio stream in a blitz array organized in this way:
        * (rate, samples). The 'data' parameter will be
        * resized if required.
+       *
+       * The check function is used to hook a signal handler and stop
+       * processing if required by the user.
        */
-      size_t load(blitz::Array<double,2>& data) const;
+      size_t load(blitz::Array<double,2>& data, void (*check)(void)=0);
 
       /**
-       * Loads all of the video stream in a buffer. Resizes the buffer if
+       * Loads all of the audio stream in a buffer. Resizes the buffer if
        * the space and type are not good.
        */
-      size_t load(bob::io::base::array::interface& b) const;
+      size_t load(bob::io::base::array::interface& b, void (*check)(void)=0);
 
       /**
       * Closes the file
@@ -145,12 +148,12 @@ namespace bob { namespace io { namespace video {
     private: //our representation
 
       std::string m_filename; ///< the name of the file we are manipulating
-      bob::core::array::typeinfo m_typeinfo; ///< read the audio type
+      bob::io::base::array::typeinfo m_typeinfo; ///< read the audio type
       boost::shared_ptr<sox_format_t> m_file; ///< input file
       boost::shared_array<sox_sample_t> m_buffer; ///< buffer for readout
       uint64_t m_offset; ///< start of stream
   };
 
-}}
+}}}
 
 #endif /* BOB_IO_AUDIO_READER_H */

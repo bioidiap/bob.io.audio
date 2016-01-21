@@ -17,7 +17,7 @@ extern "C" {
 
 namespace bob { namespace io { namespace audio {
 
-  const double SOX_CONVERSION_COEF;
+  extern const double SOX_CONVERSION_COEF;
 
   void close_sox_file(sox_format_t* f);
 

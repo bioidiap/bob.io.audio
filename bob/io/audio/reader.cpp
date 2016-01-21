@@ -86,7 +86,7 @@ static int PyBobIoAudioReader_Init(PyBobIoAudioReaderObject* self,
 #endif
 
   try {
-    self->v.reset(new bob::io::audio::Reader(c_filename, check));
+    self->v.reset(new bob::io::audio::Reader(c_filename));
   }
   catch (std::exception& e) {
     PyErr_SetString(PyExc_RuntimeError, e.what());
@@ -156,15 +156,15 @@ PyDoc_STRVAR(s_compression_factor_str, "compressionfactor");
 PyDoc_STRVAR(s_compression_factor_doc,
 "[float] Compression factor on the audio stream");
 
-PyObject* PyBobIoAudioReader_Encoding(PyBobIoAudioReaderObject* self) {
-  return Py_BuildValue("s", bob::io::audio::encoding2string(self->v->encoding()).c_str());
+PyObject* PyBobIoAudioReader_EncodingName(PyBobIoAudioReaderObject* self) {
+  return Py_BuildValue("s", bob::io::audio::encoding2string(self->v->encoding()));
 }
 
 PyDoc_STRVAR(s_encoding_name_str, "encoding");
 PyDoc_STRVAR(s_encoding_name_doc,
 "[str] Name of the encoding in which this audio file was recorded in");
 
-PyObject* PyBobIoAudioReader_Type(PyBobIoAudioReaderObject* self) {
+PyObject* PyBobIoAudioReader_TypeInfo(PyBobIoAudioReaderObject* self) {
   return PyBobIo_TypeInfoAsTuple(self->v->type());
 }
 
@@ -216,10 +216,10 @@ static PyGetSetDef PyBobIoAudioReader_getseters[] = {
       0,
     },
     {
-      s_encoding_str,
-      (getter)PyBobIoAudioReader_Encoding,
+      s_encoding_name_str,
+      (getter)PyBobIoAudioReader_EncodingName,
       0,
-      s_encoding_doc,
+      s_encoding_name_doc,
       0,
     },
     {
@@ -231,7 +231,7 @@ static PyGetSetDef PyBobIoAudioReader_getseters[] = {
     },
     {
       s_type_str,
-      (getter)PyBobIoAudioReader_Type,
+      (getter)PyBobIoAudioReader_TypeInfo,
       0,
       s_type_doc,
       0,
@@ -246,7 +246,7 @@ static PyObject* PyBobIoAudioReader_Repr(PyBobIoAudioReaderObject* self) {
 # else
   PyString_FromFormat
 # endif
-  ("%s(filename='%s')", Py_TYPE(self)->tp_name, self->v->filename().c_str());
+  ("%s(filename='%s')", Py_TYPE(self)->tp_name, self->v->filename());
 }
 
 /**
@@ -281,24 +281,24 @@ static PyObject* PyBobIoAudioReader_Load(PyBobIoAudioReaderObject* self, PyObjec
   if (!retval) return 0;
   auto retval_ = make_safe(retval);
 
-  Py_ssize_t frames_read = 0;
+  Py_ssize_t samples_read = 0;
 
   try {
     bobskin skin((PyArrayObject*)retval, info.dtype);
-    frames_read = self->v->load(skin, raise_on_error, &Check_Interrupt);
+    samples_read = self->v->load(skin, &Check_Interrupt);
   }
   catch (std::exception& e) {
     if (!PyErr_Occurred()) PyErr_SetString(PyExc_RuntimeError, e.what());
     return 0;
   }
   catch (...) {
-    if (!PyErr_Occurred()) PyErr_Format(PyExc_RuntimeError, "caught unknown exception while reading audio from file `%s'", self->v->filename().c_str());
+    if (!PyErr_Occurred()) PyErr_Format(PyExc_RuntimeError, "caught unknown exception while reading audio from file `%s'", self->v->filename());
     return 0;
   }
 
-  if (frames_read != shape[0]) {
+  if (samples_read != shape[1]) {
     //resize
-    shape[0] = frames_read;
+    shape[1] = samples_read;
     PyArray_Dims newshape;
     newshape.ptr = shape;
     newshape.len = info.nd;

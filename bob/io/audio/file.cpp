@@ -29,20 +29,19 @@ class AudioFile: public bob::io::base::File {
       m_newfile(true) {
 
         if (mode == 'r') {
-          m_reader = boost::make_shared<bob::io::audio::Reader>(m_filename);
+          m_reader = boost::make_shared<bob::io::audio::Reader>(m_filename.c_str());
           m_newfile = false;
         }
         else if (mode == 'a' && boost::filesystem::exists(path)) {
           // to be able to append must load all data and save in audio::Writer
-          m_reader = boost::make_shared<bob::io::audio::Reader>(m_filename);
+          m_reader = boost::make_shared<bob::io::audio::Reader>(m_filename.c_str());
           bob::io::base::array::blitz_array data(m_reader->type());
           m_reader->load(data);
           auto rate = m_reader->rate();
           auto encoding = m_reader->encoding();
           auto bps = m_reader->bitsPerSample();
           m_reader.reset(); ///< cleanup before truncating the file
-          m_writer = boost::make_shared<bob::io::audio::Writer>(m_filename,
-              rate, encoding, bps);
+          m_writer = boost::make_shared<bob::io::audio::Writer>(m_filename.c_str(), rate, encoding, bps);
           m_writer->append(data); ///< we are now ready to append
           m_newfile = false;
         }
@@ -100,7 +99,7 @@ class AudioFile: public bob::io::base::File {
         throw std::runtime_error("input buffer for audio input must have either 1 (channel values for 1 sample) or 2 dimensions (channels, samples)");
 
       if(m_newfile) {
-        m_writer = boost::make_shared<bob::io::audio::Writer>(m_filename);
+        m_writer = boost::make_shared<bob::io::audio::Writer>(m_filename.c_str());
       }
 
       if(!m_writer)
