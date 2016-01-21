@@ -69,7 +69,11 @@ bob::io::audio::Writer::Writer(const char* filename, double rate,
   siginfo.rate = rate;
   siginfo.precision = bits_per_sample;
   siginfo.channels = SOX_UNSPEC;
+#ifdef SOX_UNKNOWN_LEN
   siginfo.length = SOX_UNKNOWN_LEN;
+#else
+  siginfo.length = -1;
+#endif
 
   const char* extension = lsx_find_file_extension(filename);
 

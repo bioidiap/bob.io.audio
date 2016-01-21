@@ -6,11 +6,12 @@
  */
 
 #define BOB_IMPORT_VERSION
-#include <cstring>
 #include <bob.blitz/config.h>
 #include <bob.blitz/cleanup.h>
 #include <bob.core/config.h>
 #include <bob.io.base/config.h>
+
+#include <cstring>
 
 extern "C" {
 #include <sox.h>
