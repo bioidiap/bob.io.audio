@@ -6,10 +6,10 @@
    :target: http://pythonhosted.org/bob.io.audio/index.html
 .. image:: http://img.shields.io/badge/docs-latest-orange.png
    :target: https://www.idiap.ch/software/bob/docs/latest/bioidiap/bob.io.audio/master/index.html
-.. image:: https://travis-ci.org/bioidiap/bob.io.audio.svg?branch=master
-   :target: https://travis-ci.org/bioidiap/bob.io.audio?branch=master
-.. image:: https://coveralls.io/repos/bioidiap/bob.io.audio/badge.png?branch=master
-   :target: https://coveralls.io/r/bioidiap/bob.io.audio?branch=master
+.. image:: https://travis-ci.org/bioidiap/bob.io.audio.svg?branch=v2.0.0
+   :target: https://travis-ci.org/bioidiap/bob.io.audio?branch=v2.0.0
+.. image:: https://coveralls.io/repos/bioidiap/bob.io.audio/badge.png?branch=v2.0.0
+   :target: https://coveralls.io/r/bioidiap/bob.io.audio?branch=v2.0.0
 .. image:: https://img.shields.io/badge/github-master-0000c0.png
    :target: https://github.com/bioidiap/bob.io.audio/tree/master
 .. image:: http://img.shields.io/pypi/v/bob.io.audio.png
