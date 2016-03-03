@@ -41,13 +41,11 @@ BOB_TRY
   /* Parses input arguments in a single shot */
   char** kwlist = s_reader.kwlist();
 
-  PyObject* filename = 0;
+  char* filename = 0;
 
-  if (!PyArg_ParseTupleAndKeywords(args, kwds, "O&", kwlist, &PyBobIo_FilenameConverter, &filename)) return -1;
+  if (!PyArg_ParseTupleAndKeywords(args, kwds, "s", kwlist, &filename)) return -1;
 
-  const char* c_filename = PyString_AS_STRING(filename);
-
-  self->v.reset(new bob::io::audio::Reader(c_filename));
+  self->v.reset(new bob::io::audio::Reader(filename));
   return 0; ///< SUCCESS
 BOB_CATCH_MEMBER("constructor", -1)
 }
