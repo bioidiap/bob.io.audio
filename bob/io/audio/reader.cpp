@@ -5,29 +5,20 @@
  * @brief Bindings to bob::io::audio::Reader
  */
 
-#include "bobskin.h"
-
-#include <boost/make_shared.hpp>
-#include <numpy/arrayobject.h>
-#include <bob.blitz/capi.h>
-#include <bob.blitz/cleanup.h>
-#include <bob.io.base/api.h>
-#include <stdexcept>
-
 #include "main.h"
-
 
 static auto s_reader = bob::extension::ClassDoc(
   "reader",
-  "Use this object to read samples from audio files"
+  "Use this object to read samples from audio files",
+  "Audio reader objects can read data from audio files. "
+  "The current implementation uses `SoX <http://sox.sourceforge.net/>`_ , which is a stable freely available audio encoding and decoding library, designed specifically for these tasks. "
+  "You can read an entire audio in memory by using the :py:meth:`load` method."
 )
 .add_constructor(
   bob::extension::FunctionDoc(
     "reader",
     "Opens an audio file for reading",
-    "Audio reader objects can read data from audio files. "
-    "The current implementation uses `SoX <http://sox.sourceforge.net/>`_ , which is a stable freely available audio encoding and decoding library, designed specifically for these tasks. "
-    "You can read an entire audio in memory by using the :py:meth:`load` method.",
+    "Opens the audio file with the given filename for reading, i.e., using the :py:meth:`load` function",
     true
   )
   .add_prototype("filename", "")
@@ -38,7 +29,6 @@ static auto s_reader = bob::extension::ClassDoc(
 static int PyBobIoAudioReader_Init(PyBobIoAudioReaderObject* self,
     PyObject *args, PyObject* kwds) {
 BOB_TRY
-  /* Parses input arguments in a single shot */
   char** kwlist = s_reader.kwlist();
 
   char* filename = 0;
@@ -46,7 +36,7 @@ BOB_TRY
   if (!PyArg_ParseTupleAndKeywords(args, kwds, "s", kwlist, &filename)) return -1;
 
   self->v.reset(new bob::io::audio::Reader(filename));
-  return 0; ///< SUCCESS
+  return 0;
 BOB_CATCH_MEMBER("constructor", -1)
 }
 
@@ -129,7 +119,7 @@ PyObject* PyBobIoAudioReader_CompressionFactor(PyBobIoAudioReaderObject* self) {
 static auto s_encoding = bob::extension::VariableDoc(
   "encoding",
   "str",
-  "Name of the encoding in which this audio file was recorded in"
+  "Name of the encoding in which this audio file was recorded"
 );
 PyObject* PyBobIoAudioReader_EncodingName(PyBobIoAudioReaderObject* self) {
   return Py_BuildValue("s", bob::io::audio::encoding2string(self->v->encoding()));
@@ -232,7 +222,8 @@ static void Check_Interrupt() {
 static auto s_load = bob::extension::FunctionDoc(
   "load",
   "Loads all of the audio stream in a :py:class:`numpy.ndarray`",
-  "The data is organized in this way: ``(channels, data)``. "
+  "The data is organized in this way: ``(channels, data)``. ",
+  true
 )
 .add_prototype("","data")
 .add_return("data", ":py:class:`numpy.ndarray`", "The data read from this file")

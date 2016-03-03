@@ -6,8 +6,16 @@
  Python API
 ============
 
-This section includes information for using the pure Python API of
-``bob.io.audio``.
+This section includes information for using the pure Python API of ``bob.io.audio``.
+
+Classes
+-------
+
+.. autosummary::
+   bob.io.audio.reader
+   bob.io.audio.writer
+
+Details
+-------
 
 .. automodule:: bob.io.audio
-

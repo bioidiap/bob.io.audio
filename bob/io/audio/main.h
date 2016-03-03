@@ -6,8 +6,8 @@
  */
 
 
-#ifndef BOB_IP_BASE_MAIN_H
-#define BOB_IP_BASE_MAIN_H
+#ifndef BOB_IO_AUDIO_MAIN_H
+#define BOB_IO_AUDIO_MAIN_H
 
 #include <bob.blitz/cppapi.h>
 #include <bob.blitz/cleanup.h>
@@ -18,6 +18,7 @@
 #include "cpp/utils.h"
 #include "cpp/reader.h"
 #include "cpp/writer.h"
+#include "bobskin.h"
 
 // Reader
 typedef struct {
@@ -29,4 +30,15 @@ extern PyTypeObject PyBobIoAudioReader_Type;
 bool init_BobIoAudioReader(PyObject* module);
 int PyBobIoAudioReader_Check(PyObject* o);
 
-#endif // BOB_IP_BASE_MAIN_H
+
+// Writer
+typedef struct {
+  PyObject_HEAD
+  boost::shared_ptr<bob::io::audio::Writer> v;
+} PyBobIoAudioWriterObject;
+
+extern PyTypeObject PyBobIoAudioWriter_Type;
+bool init_BobIoAudioWriter(PyObject* module);
+int PyBobIoAudioWriter_Check(PyObject* o);
+
+#endif // BOB_IO_AUDIO_MAIN_H

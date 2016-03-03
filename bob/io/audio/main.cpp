@@ -35,12 +35,7 @@ static PyModuleDef module_definition = {
 };
 #endif
 
-extern PyTypeObject PyBobIoAudioWriter_Type;
-
 static PyObject* create_module (void) {
-
-  PyBobIoAudioWriter_Type.tp_new = PyType_GenericNew;
-  if (PyType_Ready(&PyBobIoAudioWriter_Type) < 0) return 0;
 
 # if PY_VERSION_HEX >= 0x03000000
   PyObject* module = PyModule_Create(&module_definition);
@@ -54,9 +49,8 @@ static PyObject* create_module (void) {
 
   /* register the types to python */
   if (!init_BobIoAudioReader(module)) return 0;
+  if (!init_BobIoAudioWriter(module)) return 0;
 
-  Py_INCREF(&PyBobIoAudioWriter_Type);
-  if (PyModule_AddObject(module, "writer", (PyObject *)&PyBobIoAudioWriter_Type) < 0) return 0;
 
   /* imports dependencies */
   if (import_bob_blitz() < 0) return 0;
