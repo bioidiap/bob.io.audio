@@ -11,53 +11,56 @@
 
 #include <stdexcept>
 #include <boost/format.hpp>
+#include <boost/assign.hpp>
 
 /* Until we can get a better handle (requires C++-11 initializers) */
-const std::map<std::string, std::string> bob::io::audio::SUPPORTED_FORMATS = {
-  {".aifc", "AIFF-C (not compressed), defined in DAVIC 1.4 Part 9 Annex B"},
-  {".aiff", "AIFF files used on Apple IIc/IIgs and SGI"},
-  {".al", "Raw audio"},
-  {".au", "PCM file format used widely on Sun systems"},
-  {".avr", "Audio Visual Research format; used on the Mac"},
-  {".cdda", "Red Book Compact Disc Digital Audio"},
-  {".cvsd", "Headerless MIL Std 188 113 Continuously Variable Slope Delta modulation"},
-  {".cvu", "Headerless Continuously Variable Slope Delta modulation (unfiltered)"},
-  {".dat", "Textual representation of the sampled audio"},
-  {".dvms", "MIL Std 188 113 Continuously Variable Slope Delta modulation with header"},
-  {".f4", "Raw audio"},
-  {".f8", "Raw audio"},
-  {".gsrt", "Grandstream ring tone"},
-  {".hcom", "Mac FSSD files with Huffman compression"},
-  {".htk", "PCM format used for Hidden Markov Model speech processing"},  {".ima", "Raw IMA ADPCM"},
-  {".la", "Raw audio"},
-  {".lu", "Raw audio"},
-  {".maud", "Used with the ‘Toccata’ sound-card on the Amiga"},
-  {".prc", "Psion Record; used in EPOC devices (Series 5, Revo and similar)"},
-  {".raw", "Raw PCM, mu-law, or A-law"},
-  {".s1", "Raw audio"},
-  {".s2", "Raw audio"},
-  {".s3", "Raw audio"},
-  {".s4", "Raw audio"},
-  {".sf", "Institut de Recherche et Coordination Acoustique/Musique"},
-  {".sln", "Asterisk PBX headerless format"},
-  {".smp", "Turtle Beach SampleVision"},
-  {".sndr", "8-bit linear audio as used by Aaron Wallace's `Sounder' of 1991"},
-  {".sndt", "8-bit linear audio as used by Martin Hepperle's `SoundTool' of 1991/2"},
-  {".sox", "SoX native intermediate format"},
-  {".sph", "SPeech HEader Resources; defined by NIST"},
-  {".8svx", "Amiga audio format (a subformat of the Interchange File Format)"},
-  {".txw", "Yamaha TX-16W sampler"},
-  {".u1", "Raw audio"},
-  {".u2", "Raw audio"},
-  {".u3", "Raw audio"},
-  {".u4", "Raw audio"},
-  {".ul", "Raw audio"},
-  {".voc", "Creative Technology Sound Blaster format"},
-  {".vox", "Raw OKI/Dialogic ADPCM"},
-  {".wav", "Microsoft audio format"},
-  {".wve", "Psion 3 audio format"},
-  {".xa", "16-bit ADPCM audio files used by Maxis games"}
-};
+const std::map<std::string, std::string> bob::io::audio::SUPPORTED_FORMATS = \
+  boost::assign::map_list_of
+  (".aifc", "AIFF-C (not compressed), defined in DAVIC 1.4 Part 9 Annex B")
+  (".aiff", "AIFF files used on Apple IIc/IIgs and SGI")
+  (".al", "Raw audio")
+  (".au", "PCM file format used widely on Sun systems")
+  (".avr", "Audio Visual Research format; used on the Mac")
+  (".cdda", "Red Book Compact Disc Digital Audio")
+  (".cvsd", "Headerless MIL Std 188 113 Continuously Variable Slope Delta modulation")
+  (".cvu", "Headerless Continuously Variable Slope Delta modulation (unfiltered)")
+  (".dat", "Textual representation of the sampled audio")
+  (".dvms", "MIL Std 188 113 Continuously Variable Slope Delta modulation with header")
+  (".f4", "Raw audio")
+  (".f8", "Raw audio")
+  (".gsrt", "Grandstream ring tone")
+  (".hcom", "Mac FSSD files with Huffman compression")
+  (".htk", "PCM format used for Hidden Markov Model speech processing")
+  (".ima", "Raw IMA ADPCM")
+  (".la", "Raw audio")
+  (".lu", "Raw audio")
+  (".maud", "Used with the ‘Toccata’ sound-card on the Amiga")
+  (".prc", "Psion Record; used in EPOC devices (Series 5, Revo and similar)")
+  (".raw", "Raw PCM, mu-law, or A-law")
+  (".s1", "Raw audio")
+  (".s2", "Raw audio")
+  (".s3", "Raw audio")
+  (".s4", "Raw audio")
+  (".sf", "Institut de Recherche et Coordination Acoustique/Musique")
+  (".sln", "Asterisk PBX headerless format")
+  (".smp", "Turtle Beach SampleVision")
+  (".sndr", "8-bit linear audio as used by Aaron Wallace's `Sounder' of 1991")
+  (".sndt", "8-bit linear audio as used by Martin Hepperle's `SoundTool' of 1991/2")
+  (".sox", "SoX native intermediate format")
+  (".sph", "SPeech HEader Resources; defined by NIST")
+  (".8svx", "Amiga audio format (a subformat of the Interchange File Format)")
+  (".txw", "Yamaha TX-16W sampler")
+  (".u1", "Raw audio")
+  (".u2", "Raw audio")
+  (".u3", "Raw audio")
+  (".u4", "Raw audio")
+  (".ul", "Raw audio")
+  (".voc", "Creative Technology Sound Blaster format")
+  (".vox", "Raw OKI/Dialogic ADPCM")
+  (".wav", "Microsoft audio format")
+  (".wve", "Psion 3 audio format")
+  (".xa", "16-bit ADPCM audio files used by Maxis games")
+  ;
 
 bob::io::audio::Writer::Writer(const char* filename, double rate,
     sox_encoding_t encoding, size_t bits_per_sample):
