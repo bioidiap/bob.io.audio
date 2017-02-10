@@ -37,7 +37,7 @@ BOB_TRY
 
   char* filename = 0;
   double rate = 8000.;
-  char* encoding = "UNKNOWN";
+  const char* encoding = "UNKNOWN";
   Py_ssize_t bits_per_sample = 16;
 
   if (!PyArg_ParseTupleAndKeywords(args, kwds, "s|dsn", kwlist,
