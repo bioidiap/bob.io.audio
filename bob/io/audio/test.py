@@ -1,10 +1,5 @@
 #!/usr/bin/env python
 # vim: set fileencoding=utf-8 :
-# Andre Anjos <andre.anjos@idiap.ch>
-# Elie Khoury < elie.khoury@idiap.ch>
-# Wed 20 Jan 2016 14:35:05 CET
-#
-# Copyright (C) 2011-2016 Idiap Research Institute, Martigny, Switzerland
 
 
 """Tests audio reader and writer based on sox for bob and python
