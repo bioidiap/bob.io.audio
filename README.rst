@@ -13,8 +13,6 @@
    :target: https://gitlab.idiap.ch/bob/bob.io.audio
 .. image:: http://img.shields.io/pypi/v/bob.io.audio.svg
    :target: https://pypi.python.org/pypi/bob.io.audio
-.. image:: http://img.shields.io/pypi/dm/bob.io.audio.svg
-   :target: https://pypi.python.org/pypi/bob.io.audio
 
 
 ===========================
