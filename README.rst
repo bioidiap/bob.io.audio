@@ -29,7 +29,7 @@ plugin that makes possible reading and writing audio files using
 Installation
 ------------
 
-Complete Bob's `installation`_ instructions. Then, to install this pacakge,
+Complete Bob's `installation`_ instructions. Then, to install this package,
 run::
 
   $ conda install bob.io.audio
