@@ -2,9 +2,9 @@
 .. Sun 14 Aug 2016 17:56:41 CEST
 
 .. image:: http://img.shields.io/badge/docs-stable-yellow.svg
-   :target: http://pythonhosted.org/bob.io.audio/index.html
+   :target: https://www.idiap.ch/software/bob/docs/bob/bob.io.audio/stable/index.html
 .. image:: http://img.shields.io/badge/docs-latest-orange.svg
-   :target: https://www.idiap.ch/software/bob/docs/latest/bob/bob.io.audio/master/index.html
+   :target: https://www.idiap.ch/software/bob/docs/bob/bob.io.audio/master/index.html
 .. image:: https://gitlab.idiap.ch/bob/bob.io.audio/badges/master/build.svg
    :target: https://gitlab.idiap.ch/bob/bob.io.audio/commits/master
 .. image:: https://gitlab.idiap.ch/bob/bob.io.audio/badges/master/coverage.svg
@@ -12,8 +12,6 @@
 .. image:: https://img.shields.io/badge/gitlab-project-0000c0.svg
    :target: https://gitlab.idiap.ch/bob/bob.io.audio
 .. image:: http://img.shields.io/pypi/v/bob.io.audio.svg
-   :target: https://pypi.python.org/pypi/bob.io.audio
-.. image:: http://img.shields.io/pypi/dm/bob.io.audio.svg
    :target: https://pypi.python.org/pypi/bob.io.audio
 
 
@@ -31,7 +29,7 @@ plugin that makes possible reading and writing audio files using
 Installation
 ------------
 
-Complete Bob's `installation`_ instructions. Then, to install this pacakge,
+Complete Bob's `installation`_ instructions. Then, to install this package,
 run::
 
   $ conda install bob.io.audio
