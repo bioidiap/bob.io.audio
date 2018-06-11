@@ -30,9 +30,7 @@ static PyObject* py_sox_version() {
   if (!retval) return 0;
   auto retval_ = make_safe(retval);
 
-# if defined(SOX_VERSION)
-  if (std::strlen(SOX_VERSION) && !dict_set(retval, "sox", SOX_VERSION)) return 0;
-# endif
+  if (!dict_set(retval, "sox", sox_version_info()->version)) return 0;
 
   return Py_BuildValue("O", retval);
 }
