@@ -24,7 +24,6 @@ requirements:
   host:
     - python {{ python }}
     - setuptools {{ setuptools }}
-    - scipy {{ scipy }}
     - bob.extension >2.0.4
     - bob.blitz
     - bob.core
@@ -33,12 +32,13 @@ requirements:
     - boost {{ boost }}
     - sox {{ sox }}
     - numpy {{ numpy }}
+    - scipy {{ scipy }}
   run:
     - python
     - setuptools
-    - scipy
     - boost
     - {{ pin_compatible('numpy') }}
+    - {{ pin_compatible('scipy') }}
 
 test:
   imports:
@@ -50,11 +50,10 @@ test:
     - conda inspect linkages -p $PREFIX {{ name }}  # [not win]
     - conda inspect objects -p $PREFIX {{ name }}  # [osx]
   requires:
-    - bob-devel {{ bob_devel }}.*
-    - nose
-    - coverage
-    - sphinx
-    - sphinx_rtd_theme
+    - nose {{ nose }}
+    - coverage {{ coverage }}
+    - sphinx {{ sphinx }}
+    - sphinx_rtd_theme {{ sphinx_rtd_theme }}
 
 about:
   home: https://www.idiap.ch/software/bob/
